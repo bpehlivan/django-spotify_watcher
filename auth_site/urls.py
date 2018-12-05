@@ -12,4 +12,5 @@ urlpatterns = [
     path('spotify', include('spotify_app.urls')),
     #path('logout/', logout, {'next_page': settings.LOGOUT_REDIRECT_URL},name='logout'),
     path('admin/', admin.site.urls),
+    path('api/v1/', include('main_rest_api.urls'))
 ]

@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'spotify_app',
     'social_django',
     'django_celery_beat',
+    'rest_framework',
+    'main_rest_api'
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -88,6 +90,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'auth_site.wsgi.application'
 
+#### Rest api
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
@@ -121,7 +132,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
-
+DATETIME_INPUT_FORMATS = ['%Y-%m-%d %H-%S-%M']
+DATE_INPUT_FORMATS = ['%Y-%m-%d']
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'

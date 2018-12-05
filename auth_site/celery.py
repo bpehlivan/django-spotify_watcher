@@ -23,7 +23,7 @@ app.conf.beat_schedule = {
     },
     'add-every-30-seconds': {
         'task': 'spotify_app.tasks.get_songs',
-        'schedule': 120.0
+        'schedule': 10.0
     },
 }
 app.conf.timezone = 'UTC'

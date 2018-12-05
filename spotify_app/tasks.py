@@ -16,9 +16,11 @@ def call_refresh_token():
 @shared_task
 def get_songs():
 
-    user = User.objects.get(username='enivecivokke')
-    social = user.social_auth.get(provider='spotify')
-    token = social.extra_data['access_token']
-    ref_token = social.extra_data['access_token']
-    spotify_wrapper = SpotifyApi(token,ref_token)
-    spotify_wrapper.get_playlists()
+    users = User.objects.all()
+    for user_object in users:
+        try:
+            social = user_object.social_auth.get(provider='spotify')
+            spotify_wrapper = SpotifyApi(social)
+            spotify_wrapper.get_currently_playing()
+        except:
+            pass
