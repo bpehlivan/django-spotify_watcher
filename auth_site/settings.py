@@ -25,7 +25,10 @@ SECRET_KEY = '2)=t3jyd=vzjx6jr+h%f2_q3ntr7p_!e!lx(qb&@c#yj9la)z5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+'104.248.133.32',
+
+]
 
 #Celery ADD-ONS
 
