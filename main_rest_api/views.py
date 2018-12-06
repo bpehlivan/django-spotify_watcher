@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from .serializers import UserSerializer, GroupSerializer, user_track_history_serializer
 from spotify_app.models import user_tracks_history
 from datetime import timedelta, datetime as dt
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import authentication, permissions
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -35,7 +35,7 @@ class user_track_history(viewsets.ModelViewSet):
 
 
 class admin_user_track_history(viewsets.ModelViewSet):
-    permission_classes = (IsAdminUser | ReadOnly)
+    permission_classes = (permissions.IsAdminUser,)
     serializer_class = user_track_history_serializer
 
     def get_queryset(self):

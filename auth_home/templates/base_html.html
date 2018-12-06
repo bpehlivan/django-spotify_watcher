@@ -1,7 +1,6 @@
 {% load static %}
 <head>
-    {% block head %}
-    {% endblock %}
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -19,6 +18,12 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'css/one-page-wonder.min.css' %}" rel="stylesheet">
 
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    {% block head %}
+    {% endblock %}
   </head>
 
 <body>
@@ -57,15 +62,10 @@
     </footer>
 
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
   </body>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
 
   </body>
 
