@@ -1,0 +1,191 @@
+https://realpython.com/blog/python/asynchronous-tasks-with-django-and-celery/
+
+Install Celery
+$ pip install celery
+Install celery Broker
+$ sudo apt-get install rabbitmq-server
+Django Settings
+BROKER_URL = 'amqp://localhost'
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_RESULT_PERSISTENT = False
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Sao_Paulo'
+Inside your app, create a file called celery.py, and add this:
+
+from __future__ import absolute_import
+
+import os
+
+from celery import Celery
+
+# set the default Django settings module for the 'celery' program.
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sendmail.settings')
+
+from django.conf import settings  # noqa
+
+app = Celery('sendmail')
+
+# Using a string here means the worker will not have to
+# pickle the object when using Windows.
+app.config_from_object('django.conf:settings')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+
+
+@app.task(bind=True)
+def debug_task(self):
+    print('Request: {0!r}'.format(self.request))
+Now, ad another file to the app called tasks.py, with the following content:
+
+import os
+from celery.schedules import crontab
+from celery.task import periodic_task
+from celery.utils.log import get_task_logger
+
+from core.utils import send_mail
+import configparser
+from django.conf import settings
+
+
+try:
+    config = configparser.ConfigParser()
+    file = os.path.join(settings.BASE_DIR, 'schedule.ini')
+    config.read(file)
+    hour = config['DEFAULT']['hour']
+    minute = config['DEFAULT']['minute']
+    day = config['DEFAULT']['day']
+except Exception as e:
+    hour = 8
+    minute = 30
+    day = 'mon'
+
+logger = get_task_logger(__name__)
+@periodic_task(
+    run_every=(crontab(hour=hour, minute=minute, day_of_week=day)),
+    name="task_send_mail",
+    ignore_result=True
+)
+def task_send_mail():
+    """
+    Saves latest image from Flickr
+    """
+    send_mail()
+    logger.info("Sent e-mails ;)")
+Supervisor
+$ sudo apt-get install supervisor
+Now we need to add the supervisor config files at /etc/supervisor/conf.d:
+
+$ sudo nano /etc/supervisor/conf.d/mail_celery.conf
+Paste the following content to the file (edit the paths to match your server):
+
+; ==================================
+;  celery worker supervisor example
+; ==================================
+
+; the name of your supervisord program
+[program:mailcelery]
+
+; Set full path to celery program if using virtualenv
+command=/home/maumau/.virtualenvs/sendmail/bin/celery worker -A sendmail --loglevel=INFO
+
+; The directory to your Django project
+directory=/home/maumau/Workspace/projects/sendmail
+
+; If supervisord is run as the root user, switch users to this UNIX user account
+; before doing any processing.
+user=maumau
+
+; Supervisor will start as many instances of this program as named by numprocs
+numprocs=1
+
+; Put process stdout output in this file
+stdout_logfile=/var/log/celery/mail_worker.log
+
+; Put process stderr output in this file
+stderr_logfile=/var/log/celery/mail_worker.log
+
+; If true, this program will start automatically when supervisord is started
+autostart=true
+
+; May be one of false, unexpected, or true. If false, the process will never
+; be autorestarted. If unexpected, the process will be restart when the program
+; exits with an exit code that is not one of the exit codes associated with this
+; process’ configuration (see exitcodes). If true, the process will be
+; unconditionally restarted when it exits, without regard to its exit code.
+autorestart=true
+
+; The total number of seconds which the program needs to stay running after
+; a startup to consider the start successful.
+startsecs=10
+
+; Need to wait for currently executing tasks to finish at shutdown.
+; Increase this if you have very long running tasks.
+stopwaitsecs = 600
+
+; When resorting to send SIGKILL to the program to terminate it
+; send SIGKILL to its whole process group instead,
+; taking care of its children as well.
+killasgroup=true
+
+; if your broker is supervised, set its priority higher
+; so it starts first
+priority=998
+And then...
+
+$ sudo nano /etc/supervisor/conf.d/mail_celerybeat.conf
+With the following content:
+
+; ================================
+;  celery beat supervisor example
+; ================================
+
+; the name of your supervisord program
+[program:mailcelerybeat]
+
+; Set full path to celery program if using virtualenv
+command=/home/maumau/.virtualenvs/sendmail/bin/celerybeat -A sendmail --loglevel=INFO
+
+; The directory to your Django project
+directory=/home/maumau/Workspace/projects/sendmail
+
+; If supervisord is run as the root user, switch users to this UNIX user account
+; before doing any processing.
+user=maumau
+
+; Supervisor will start as many instances of this program as named by numprocs
+numprocs=1
+
+; Put process stdout output in this file
+stdout_logfile=/var/log/celery/mail_beat.log
+
+; Put process stderr output in this file
+stderr_logfile=/var/log/celery/mail_beat.log
+
+; If true, this program will start automatically when supervisord is started
+autostart=true
+
+; May be one of false, unexpected, or true. If false, the process will never
+; be autorestarted. If unexpected, the process will be restart when the program
+; exits with an exit code that is not one of the exit codes associated with this
+; process’ configuration (see exitcodes). If true, the process will be
+; unconditionally restarted when it exits, without regard to its exit code.
+autorestart=true
+
+; The total number of seconds which the program needs to stay running after
+; a startup to consider the start successful.
+startsecs=10
+
+; if your broker is supervised, set its priority higher
+; so it starts first
+priority=999
+Now, to run supervisor run:
+
+$ sudo supervisord
+It will load the .conf files we just created.
+
+To start/stop and status use the following commands:
+
+$ sudo supervisorctl stop mailcelery
+$ sudo supervisorctl start mailcelery
+$ sudo supervisorctl status mailcelery

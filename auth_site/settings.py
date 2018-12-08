@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
 '104.248.133.32',
-
+'127.0.0.1',
 ]
 
 #Celery ADD-ONS
@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'social_django',
     'django_celery_beat',
     'rest_framework',
-    'main_rest_api'
+    'main_rest_api',
+    'corsheaders',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -61,12 +62,15 @@ AUTHENTICATION_BACKENDS = (
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+##accept request from all
+CORS_ORIGIN_ALLOW_ALL = True
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/home/'
 SOCIAL_AUTH_SPOTIFY_KEY = 'a9a8203e697a41418253d9820a89f0ce'

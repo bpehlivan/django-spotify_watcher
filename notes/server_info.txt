@@ -1,0 +1,8 @@
+#configure server
+
+#start redis
+sudo redis-server
+#start celery beat and worker
+#/etc/supervisor/conf.d/  settings are here
+#/var/log/celery/ logs are here
+-sudo supervisord

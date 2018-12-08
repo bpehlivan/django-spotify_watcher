@@ -1,26 +1,12 @@
 
 
 user_id=document.currentScript.getAttribute('user_id')
-url="http://127.0.0.1:8000/api/v1/admin_user_track_history/2"
+url="http://104.248.133.32/api/v1/admin_user_track_history/1/"
 
 //console.log(d.getDate())
 //console.log(d.getDate())
 
 var d = new Date();
-d.setDate(d.getDate() - 1);
-console.log(d.getDate())
-d.setDate(d.getDate() - 1);
-console.log(d.getDate())
-d.setDate(d.getDate() - 1);
-console.log(d.getDate())
-d.setDate(d.getDate() - 1);
-console.log(d.getDate())
-d.setDate(d.getDate() - 1);
-console.log(d.getDate())
-d.setDate(d.getDate() - 1);
-console.log(d.getDate())
-d.setDate(d.getDate() - 1);
-console.log(d.getDate())
 $.ajax({
     url: url,
     dataType: 'application/json',
@@ -28,6 +14,7 @@ $.ajax({
 
 
         json = JSON.parse(data["responseText"]);
+                    console.log(json)
                     (json['results']).forEach(song => {
                         track_name = song.track_name;
                         timestamp= song.timestamp;
