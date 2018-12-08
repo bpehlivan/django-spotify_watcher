@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
 #Celery ADD-ONS
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
+CELERY_RESULT_BACKEND = 'db+postgresql://mgokberk:02122791245a@localhost/spotify_db'
 
 
 # Application definition
