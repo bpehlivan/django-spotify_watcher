@@ -7,7 +7,7 @@ import spotipy.util as util
 import json
 import requests
 from django.contrib.auth.models import User
-from .spotify_api import SpotifyApi,SpotifyRefreshUsers
+from spotify_app import spotify_api
 
 
 def weekly_chart(request):
@@ -21,12 +21,23 @@ def weekly_chart(request):
 
 
 def recommended_songs(request):
-    user = User.objects.get(username='enivecivokke')
-    social = user.social_auth.get(provider='spotify')
-    token = social.extra_data['access_token']
-    ref_token = social.extra_data['access_token']
-    spotify_wrapper = SpotifyApi(token,ref_token)
-    spotify_wrapper.get_playlists()
+    users = User.objects.all()
+    print(users)
+    for user_object in users:
+        try:
+            #print(user_object)
+            social = user_object.social_auth.get(provider='spotify')
+            print(social)
+            spotify_wrapper = spotify_api.SpotifyApi(social)
+            spotify_wrapper.get_currently_playing()
+        except Exception as e:
+            print(e)
+    #user = User.objects.get(username='enivecivokke')
+    #social = user.social_auth.get(provider='spotify')
+    #token = social.extra_data['access_token']
+    #ref_token = social.extra_data['access_token']
+    #spotify_wrapper = SpotifyApi(token,ref_token)
+    #spotify_wrapper.get_playlists()
     #print(request.user)
     #user = User.objects.get(username=request.user)
     #print(user)
