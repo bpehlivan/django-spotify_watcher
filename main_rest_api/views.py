@@ -36,8 +36,8 @@ class user_track_history(viewsets.ModelViewSet):
 
 
 class admin_user_track_history(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAdminUser,)
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    #permission_classes = (permissions.IsAdminUser,)
+    #authentication_classes = (SessionAuthentication, BasicAuthentication)
     serializer_class = user_track_history_serializer
 
     def get_queryset(self):
