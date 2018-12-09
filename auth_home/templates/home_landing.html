@@ -4,14 +4,16 @@
 
     {% block content %}
     <header class="masthead text-center text-white">
+
       <div class="masthead-content">
-        <div class="container">
+      <div class="row">
+          <div class="col-sm-10">
+            <div class="container">
           {% if user.is_authenticated %}
             <h1 class="masthead-heading mb-0">Welcome to My site</h1>
             <a href="{% url 'spotify_app:weekly_chart' %}" class="btn btn-primary btn-xl rounded-pill mt-5">Check your weekly chart</a>
             <a href="{% url 'spotify_app:recommended_songs' %}" class="btn btn-primary btn-xl rounded-pill mt-5">Check your recommended songs</a>
-            <h2>Currently Listening by Users</h2>
-            <div class='container' id='currently_listening'class="masthead-subheading mb-0"></div>
+
           {% else %}
 
           <h1 class="masthead-heading mb-0">Welcome to My site</h1>
@@ -20,6 +22,15 @@
           {% endif %}
 
         </div>
+          </div>
+          <div class="col-sm-2">
+              <h2>Currently Listening by Users</h2>
+              <div class='container' id='currently_listening'class="masthead-subheading mb-0"></div>
+          </div>
+
+      </div>
+
+
       </div>
       <div class="bg-circle-1 bg-circle"></div>
       <div class="bg-circle-2 bg-circle"></div>
