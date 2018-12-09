@@ -22,13 +22,13 @@ class user_tracks_history(models.Model):
     timestamp = models.DateTimeField()
     user_id = models.IntegerField()
     playlist_href = models.CharField(max_length=255)
-    album_id = models.ForeignKey(spotify_albums, on_delete=models.CASCADE , related_name='album_id_pk')
-    artist_id = models.ForeignKey(spotify_tracks, on_delete=models.CASCADE, related_name='artist_id_pk')
-    track_name = models.ForeignKey(spotify_tracks, on_delete=models.CASCADE, related_name='track_name_pk')
-    track_id = models.ForeignKey(spotify_tracks, on_delete=models.CASCADE, related_name='track_id_pk')
-    progress_ms = models.IntegerField()
-    currently_playing_type = models.CharField(max_length=255)
-    is_playing = models.BooleanField()
+    album_id = models.CharField(max_length=255)
+    artist_id = models.CharField(max_length=255)
+    track_name = models.CharField(max_length=255)
+    track_id = models.CharField(max_length=255)
+    progress_ms = models.IntegerField(blank=True, null=True)
+    currently_playing_type = models.CharField(max_length=255,blank=True, null=True)
+    is_playing = models.BooleanField(blank=True, null=True)
 
 
 

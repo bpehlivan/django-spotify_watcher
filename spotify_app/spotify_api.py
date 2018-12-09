@@ -3,8 +3,8 @@ import logging
 import requests
 from datetime import datetime
 from django.contrib.auth.models import User
-
-from .models import user_tracks_history
+import os
+from .models import user_tracks_history,spotify_albums,spotify_tracks
 from spotify_app.api_spotify_wrapper import Spotify
 # ts = int("1284101485")
 # if you encounter a "year is out of range" error the timestamp
@@ -41,13 +41,11 @@ class SpotifyApi():
         print(self.user_id)
         url = "https://api.spotify.com/v1/me/player/currently-playing"
         payload = ""
-        headers = {'Authorization': "Bearer " + "BQBMsvit6meAnrZykmbBcw1sdSwLDXUXMZcZhiGAfxrkWSNd2Ah3J5KJ7g8aLj8xGJD6f5B491dMeR80NZtCjcc0Hlg8K2SdrxHj2ie0VzBl1evWbubd9VybOxWOSpHIxkJx5UPVbsuvc6UsDkEv9tJh3GLD0f-5Snk6dd8qiPRS40KvLqTvQ9u4nC8Rbwf9Z2rCeMx8JcEmOmVm650bS7WGwUV6WaBqdumlkg7lUHr8pGHeeom5",
+        headers = {'Authorization': "Bearer " + self.auth_token,
                    'cache-control': "no-cache"}
 
         response = requests.request("GET", url, data=payload, headers=headers)
 
-        data = response.text
-        #logger.info(data)
         try:
             data = response.json()
             defaults = {
@@ -62,21 +60,80 @@ class SpotifyApi():
                 'currently_playing_type': data["currently_playing_type"] if data["currently_playing_type"] else "",
                 'is_playing': data["is_playing"] if data["is_playing"] else None
             }
+
+
             obj, created = user_tracks_history.objects.update_or_create(
                 timestamp=datetime.fromtimestamp(float(data["timestamp"]) / 1000),
                 user_id=self.user_id, defaults=defaults
             )
             obj.save()
-            logger.info("DATA " +  data["item"]["name"] + ' ' + self.user_id)
         except Exception as e:
-            print(str(e))
-            logger.warning('NO DATA' + self.user_id)
+            pass
 
 
-    def test_api(self):
-        x=Spotify(auth="BQBMsvit6meAnrZykmbBcw1sdSwLDXUXMZcZhiGAfxrkWSNd2Ah3J5KJ7g8aLj8xGJD6f5B491dMeR80NZtCjcc0Hlg8K2SdrxHj2ie0VzBl1evWbubd9VybOxWOSpHIxkJx5UPVbsuvc6UsDkEv9tJh3GLD0f-5Snk6dd8qiPRS40KvLqTvQ9u4nC8Rbwf9Z2rCeMx8JcEmOmVm650bS7WGwUV6WaBqdumlkg7lUHr8pGHeeom5").current_user_recently_played()
-        print(type(x))
-        logger.info(json.dumps(x))
+    def get_user_recently_played(self):
+        '''
+        This is a heavy method that updates albums,tracks and user history
+
+        :return:
+        '''
+        datas=Spotify(auth=self.auth_token).current_user_recently_played()
+
+        for data in datas["items"]:
+            defaults_album = {
+            'album_id': data["track"]["album"]["id"] if data["track"]["album"]["id"] else None,
+            'album_name': data["track"]["album"]["name"] if data["track"]["album"]["name"] else None,
+            'album_uri': data["track"]["album"]["uri"] if data["track"]["album"]["uri"] else None,
+            'album_artists_ids': '',
+            'album_href': data["track"]["album"]["href"] if data["track"]["album"]["href"] else None,}
+            obj, created = spotify_albums.objects.update_or_create(
+                album_id=data["track"]["album"]["id"] if data["track"]["album"]["id"] else None,
+                defaults=defaults_album
+            )
+            obj.save()
+
+
+            defaults_tracks = {
+            'track_id': data["track"]["id"] if data["track"]["id"] else None,
+            'track_name': data["track"]["name"] if data["track"]["name"] else None,
+            'track_popularity' : data["track"]["popularity"] if data["track"]["popularity"] else None,
+            'track_duration': data["track"]["duration_ms"] if data["track"]["duration_ms"] else None,
+            'track_uri': " ".join(artist["id"] for artist in data["track"]["album"]["artists"]),
+            'track_artist_id': '',
+            'track_href': data["track"]["album"]["href"] if data["track"]["album"]["href"] else None,
+            'track_artist_name':" ".join(artist["name"] for artist in data["track"]["album"]["artists"])}
+            obj, created = spotify_tracks.objects.update_or_create(
+                track_id=data["track"]["id"] if data["track"]["id"] else None,
+                defaults=defaults_tracks
+            )
+            print(obj,created)
+            obj.save()
+
+            try:
+                defaults = {
+                    'timestamp': data["played_at"],
+                    'user_id': self.user_id,
+                    'playlist_href': data["context"]["href"] if data["context"]["href"] else None,
+                    'artist_id': " ".join(artist["id"] for artist in data["track"]["album"]["artists"]),
+                    'album_id': data["track"]["album"]["id"] if data["track"]["album"]["id"] else None,
+                    'track_id': data["track"]["id"] if data["track"]["id"] else None,
+                    'track_name': data["track"]["name"] if data["track"]["name"] else None,
+                    'progress_ms': None,
+                    'currently_playing_type': None,
+                    'is_playing': False,
+                }
+
+
+                obj, created = user_tracks_history.objects.update_or_create(
+                    timestamp=data["played_at"],
+                    user_id=self.user_id, defaults=defaults
+                )
+                obj.save()
+            except Exception as e:
+                print(e)
+
+
+
 
 
 class SpotifyRefreshUsers():

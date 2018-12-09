@@ -25,6 +25,10 @@ app.conf.beat_schedule = {
         'task': 'spotify_app.tasks.get_songs',
         'schedule': 10.0
     },
+    'add-every-1-hour': {
+        'task': 'spotify_app.tasks.get_user_recently_played',
+        'schedule': 3600.0
+    },
 }
 app.conf.timezone = 'UTC'
 

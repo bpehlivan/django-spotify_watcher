@@ -29,9 +29,9 @@ def recommended_songs(request):
             social = user_object.social_auth.get(provider='spotify')
             print(social)
             spotify_wrapper = spotify_api.SpotifyApi(social)
-            spotify_wrapper.get_currently_playing()
+            spotify_wrapper.get_user_recently_played()
         except Exception as e:
-            print(e)
+            print(str(e) + str(user_object.id))
     #user = User.objects.get(username='enivecivokke')
     #social = user.social_auth.get(provider='spotify')
     #token = social.extra_data['access_token']
