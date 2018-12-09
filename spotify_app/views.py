@@ -21,8 +21,8 @@ def weekly_chart(request):
 
 
 def recommended_songs(request):
-    spotify_api.SpotifyRefreshUsers().refresh_token()
-    '''
+
+
     users = User.objects.all()
     print(users)
     for user_object in users:
@@ -33,7 +33,7 @@ def recommended_songs(request):
             spotify_wrapper.get_user_recently_played()
         except Exception as e:
             print(str(e) + str(user_object.id))
-    '''
+
 
     #user = User.objects.get(username='enivecivokke')
     #social = user.social_auth.get(provider='spotify')
