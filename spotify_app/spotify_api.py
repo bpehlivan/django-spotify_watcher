@@ -10,7 +10,7 @@ from spotify_app.api_spotify_wrapper import Spotify
 # if you encounter a "year is out of range" error the timestamp
 # may be in milliseconds, try `ts /= 1000` in that case
 # print(datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
-
+import time
 # create logger with 'spam_application'
 logger = logging.getLogger('test')
 logger.setLevel(logging.DEBUG)
@@ -34,6 +34,7 @@ class SpotifyApi():
         self.auth_token = user_object.extra_data['access_token']
         self.refresh_token = user_object.extra_data['access_token']
         self.user_id = user_object.user_id
+        print(self.auth_token,self.user_id)
 
     def get_currently_playing(self):
 
@@ -140,20 +141,31 @@ class SpotifyRefreshUsers():
     def __init__(self):
         self.users = User.objects.all()
         self.refresh_token_url = "https://accounts.spotify.com/api/token"
+
         self.headers = {'Content-Type': "application/x-www-form-urlencoded",
                         'Authorization': "Basic YTlhODIwM2U2OTdhNDE0MTgyNTNkOTgyMGE4OWYwY2U6MzcxYjM5NTg3ZWJjNDg1NWIzNGE1ZjM2YzdlMjJlZDY=", }
-        self.payload = "grant_type=refresh_token&refresh_token="
+
 
     def refresh_token(self):
-        print(self.users)
+        '''
+        TO BE CLEANED
+        :return:
+        '''
         for user in self.users:
             user = User.objects.get(username=user)
             try:
+                self.payload = "grant_type=refresh_token&refresh_token="
+                self.querystring = {"grant_type": "refresh_token",
+                                    "refresh_token": ""}
                 social = user.social_auth.get(provider='spotify')
                 refresh_token = social.extra_data['refresh_token']
+                print(social.extra_data['refresh_token'],social)
+                self.querystring["refresh_token"]= refresh_token
                 self.payload = self.payload + refresh_token
-                response = requests.request("POST", self.refresh_token_url, data=self.payload, headers=self.headers)
+                response = requests.request("POST", self.refresh_token_url, data=self.payload, headers=self.headers, params=self.querystring)
                 data = response.json()
+                print(refresh_token)
+                print(data,user)
                 social.extra_data['access_token'] = data['access_token']
                 social.save()
             except Exception as e:
