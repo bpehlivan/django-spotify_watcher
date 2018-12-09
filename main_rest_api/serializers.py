@@ -20,3 +20,7 @@ class user_track_history_serializer(serializers.HyperlinkedModelSerializer):
         model = user_tracks_history
         fields = ('user_id','timestamp','track_name','album_id')
 
+class online_user_live_listenings_serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = user_tracks_history
+        fields = ('user_id','timestamp','track_name')

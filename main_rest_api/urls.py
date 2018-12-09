@@ -7,6 +7,7 @@ router.register('users', views.UserViewSet)
 router.register('groups', views.GroupViewSet)
 router.register('user_track_history',views.user_track_history, base_name='user_track_history')
 router.register('admin_user_track_history/(?P<user_id>\d+)',views.admin_user_track_history, base_name="admin_user_track_history")
+router.register('online_user_live_listenings',views.online_user_live_listenings, base_name='online_user_live_listenings')
 #router.register('admin_user_track_history/(?P<user_id>.+)/', views.admin_user_track_history, base_name='admin_user_track_history'),
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

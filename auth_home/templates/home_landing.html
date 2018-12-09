@@ -10,9 +10,12 @@
             <h1 class="masthead-heading mb-0">Welcome to My site</h1>
             <a href="{% url 'spotify_app:weekly_chart' %}" class="btn btn-primary btn-xl rounded-pill mt-5">Check your weekly chart</a>
             <a href="{% url 'spotify_app:recommended_songs' %}" class="btn btn-primary btn-xl rounded-pill mt-5">Check your recommended songs</a>
+            <h2>Currently Listening by Users</h2>
+            <div class='container' id='currently_listening'class="masthead-subheading mb-0"></div>
           {% else %}
+
           <h1 class="masthead-heading mb-0">Welcome to My site</h1>
-          <h2 class="masthead-subheading mb-0">lorem ipsum test aufwidersehen einshuldigung</h2>
+
           <a href="/login" class="btn btn-primary btn-xl rounded-pill mt-5">Connect with spotfiy to continue</a>
           {% endif %}
 
@@ -23,6 +26,7 @@
       <div class="bg-circle-3 bg-circle"></div>
       <div class="bg-circle-4 bg-circle"></div>
     </header>
+    <script src="{% static 'js/online_user_listening.js' %}"></script>
     {% endblock %}
 
     <!-- Navigation
