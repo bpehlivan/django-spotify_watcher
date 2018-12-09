@@ -27,7 +27,6 @@ def recommended_songs(request):
         try:
             #print(user_object)
             social = user_object.social_auth.get(provider='spotify')
-            print(social)
             spotify_wrapper = spotify_api.SpotifyApi(social)
             spotify_wrapper.get_user_recently_played()
         except Exception as e:

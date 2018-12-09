@@ -33,7 +33,7 @@ class SpotifyApi():
     def __init__(self, user_object):
         self.auth_token = user_object.extra_data['access_token']
         self.refresh_token = user_object.extra_data['access_token']
-        self.user_id = user_object.id
+        self.user_id = user_object.user_id
 
     def get_currently_playing(self):
 
@@ -77,7 +77,7 @@ class SpotifyApi():
 
         :return:
         '''
-        datas=Spotify(auth=self.auth_token).current_user_recently_played()
+        datas=Spotify(auth="BQDDfZIfEqq20EkPGCpljgNF9KiI8GebYo_gizMQNeZGdNJTKAOazohSrQ73pQHh684aDyTTHNtByu16w1HKXMJBQ1q5x5wkgqCVkJ6aHYgw0k-_5mN0cHVzs7BP7rCbYMlSQVnR-xp9tMK09k8C1a3Y7VBLBw").current_user_recently_played()
 
         for data in datas["items"]:
             defaults_album = {
